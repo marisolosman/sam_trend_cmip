@@ -5,8 +5,6 @@ import pandas as pd
 import xarray as xr
 import matplotlib.pyplot as plt
 FILE = '/datos/osman/newsam.1957.2019.txt'
-#f = open(FILE, 'r')
-#header1 = f.readline()
 data = []
 year = []
 with open(FILE) as f:
@@ -29,39 +27,37 @@ TIMEMAX = '2014-12-31'
 
 sam = sam.sel(time=slice(TIMEMIN, TIMEMAX))
 RUTA = '/datos/osman/sam_trend_cmip_figures/'
-#plot sam time serie
-#fig1 = plt.figure(1, (10, 4), dpi=500)  #fig size in inches
-#plt.plot(sam.time.values,sam.data, 'r', linewidth=1.5)
-#plt.axhline(y=0,xmin=0,linestyle='--',linewidth=0.8,
-#           color='k',alpha=0.5)
-##ax.plot(2015,proyeccion_hgt_2015[i], 'b.', linewidth=2)
-##ax.set_xlim((ti-1,2016))
-#plt.ylim((-8, 8))
-#plt.ylabel('SAM')
-#plt.title('Southern Annular Mode 1957-2014',fontsize=12)
-#fig1.savefig(RUTA + 'sam_time_series.png', dpi=500, bbox_inches='tight', papertype='A4', 
-#             orientation='landscape')
-#
+#plot sam time series
+fig1 = plt.figure(1, (10, 4), dpi=500)  #fig size in inches
+plt.plot(sam.time.values,sam.data, 'r', linewidth=1.5)
+plt.axhline(y=0,xmin=0,linestyle='--',linewidth=0.8,
+           color='k',alpha=0.5)
+plt.ylim((-8, 8))
+plt.ylabel('SAM')
+plt.title('Southern Annular Mode 1957-2014',fontsize=12)
+fig1.savefig(RUTA + 'sam_time_series.png', dpi=500, bbox_inches='tight', papertype='A4', 
+             orientation='landscape')
+
 #compute seasonal time series
 seas = ['MAM', 'JJA', 'SON', 'DJF']
 sam_seasonal = sam.resample(dim='time', freq='QS-MAR', how='mean')
-#fig2 = plt.figure(1, (10, 14), dpi=500)
-#x = np.arange(1957, 2015)
-#
-#for i in range(4):
-#    ax = plt.subplot(5, 1, i+1)
-#    line1 = ax.plot(sam_seasonal.time.values[sam_seasonal['time.month']==3 + i*3], sam_seasonal.sel(time=sam_seasonal['time.month']==3 + i*3), 'r', linewidth=1.5)
-#    ax.axhline(y=0, xmin=0, linestyle='--', linewidth=0.8,
-#               color='k', alpha=0.5)
-#    # tidy up the figure
-#    ax.set_ylim((-4.5, 4.5))
-#    plt.title(seas[i], fontsize=10)
-#plt.tight_layout()#pad=0.4, w_pad=0.5, h_pad=1.0)
-#plt.subplots_adjust(top=0.93)
-#plt.suptitle('Seasonal Southern Annular Mode', fontsize=12)
-#fig2.savefig(RUTA + 'sam_seasonal.png',dpi=500, bbox_inches='tight', papertype='A4', 
-#             orientation='landscape')
-#
+fig2 = plt.figure(1, (10, 14), dpi=500)
+x = np.arange(1957, 2015)
+
+for i in range(4):
+    ax = plt.subplot(5, 1, i+1)
+    line1 = ax.plot(sam_seasonal.time.values[sam_seasonal['time.month']==3 + i*3], sam_seasonal.sel(time=sam_seasonal['time.month']==3 + i*3), 'r', linewidth=1.5)
+    ax.axhline(y=0, xmin=0, linestyle='--', linewidth=0.8,
+               color='k', alpha=0.5)
+    # tidy up the figure
+    ax.set_ylim((-4.5, 4.5))
+    plt.title(seas[i], fontsize=10)
+plt.tight_layout()#pad=0.4, w_pad=0.5, h_pad=1.0)
+plt.subplots_adjust(top=0.93)
+plt.suptitle('Seasonal Southern Annular Mode', fontsize=12)
+fig2.savefig(RUTA + 'sam_seasonal.png',dpi=500, bbox_inches='tight', papertype='A4', 
+             orientation='landscape')
+
 #compute trends
 #annual
 sam_annual = sam.groupby('time.year').mean(dim='time')
@@ -74,7 +70,6 @@ for i in range(4):
     [slope, interc, r_va, p_val, z] = stats.linregress(np.arange(0, len(sam_seasonal.time.values[sam_seasonal['time.month']==3 + i*3])),
                                                        sam_seasonal.sel(time=sam_seasonal['time.month']==3 + i*3))
     print(slope, p_val)
-
 
 #half period
 sam_early = sam_annual.sel(year=slice(1957, 1984))
